@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Test;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;//ファサード：入口：設定はconfig app.php
 
 class TestController extends Controller
 {
