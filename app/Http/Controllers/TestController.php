@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Models\Test;
 
+use Illuminate\Support\Facades\DB;
+
 class TestController extends Controller
 {
     //
@@ -14,7 +16,11 @@ class TestController extends Controller
 
         $values = Test::all();//全部のデータ
 
-        //dd($values);//変数の中身を表示
+        $tests = DB::table('tests')
+        ->select('id')
+        ->get();
+
+        dd($tests);//変数の中身を表示
 
         return view('tests.test', compact('values'));//渡す変数は''で囲む
     }
