@@ -14,7 +14,7 @@ class TestController extends Controller
     public function index()
     {
 
-        $values = Test::all();//全部のデータ
+        //$values = Test::all();//全部のデータ
 
         $tests = DB::table('tests')
         ->select('id')
