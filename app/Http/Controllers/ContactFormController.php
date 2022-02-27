@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\ContactForm;
+
+use Illuminate\Support\Facades\DB;
+use App\Services\CheckFormData;
+
 class ContactFormController extends Controller
 {
     /**
@@ -13,8 +18,18 @@ class ContactFormController extends Controller
      */
     public function index()
     {
-        //
-        return view('contact.index');
+        //Eloquent ORM
+        //$contacts = ContactForm::all();
+
+        //クエリビルダ
+        $contacts = DB::table('contact_forms')
+                    ->select('id', 'your_name', 'title', 'created_at')
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+
+        //dd($contacts);
+
+        return view('contact.index', compact('contacts'));
     }
 
     /**
@@ -24,7 +39,7 @@ class ContactFormController extends Controller
      */
     public function create()
     {
-        //
+        return view('contact.create');
     }
 
     /**
@@ -35,7 +50,20 @@ class ContactFormController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $contact = new ContactForm;
+
+        $contact->your_name = $request->input('your_name');
+        $contact->title = $request->input('title');
+        $contact->email = $request->input('email');
+        $contact->url = $request->input('url');
+        $contact->gender = $request->input('gender');
+        $contact->age = $request->input('age');
+        $contact->contact = $request->input('contact');
+
+        $contact->save();
+
+        return redirect('contact/index');
+
     }
 
     /**
@@ -46,7 +74,12 @@ class ContactFormController extends Controller
      */
     public function show($id)
     {
-        //
+        $contact = ContactForm::find($id);
+
+        $gender = CheckFormData::checkGender($contact);
+        $age = CheckFormData::checkAge($contact);
+
+        return view('contact.show', compact('contact', 'gender', 'age'));
     }
 
     /**
@@ -58,6 +91,9 @@ class ContactFormController extends Controller
     public function edit($id)
     {
         //
+        $contact = ContactForm::find($id);
+
+        return view('contact.edit', compact('contact'));
     }
 
     /**
@@ -69,7 +105,23 @@ class ContactFormController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //新しくインスタンスを作のではなく存在するidを持ってくる
+        //$contact = new ContactForm;
+        $contact = ContactForm::find($id);
+
+        //上書き
+        $contact->your_name = $request->input('your_name');
+        $contact->title = $request->input('title');
+        $contact->email = $request->input('email');
+        $contact->url = $request->input('url');
+        $contact->gender = $request->input('gender');
+        $contact->age = $request->input('age');
+        $contact->contact = $request->input('contact');
+
+        //保存
+        $contact->save();
+
+        return redirect('contact/index');
     }
 
     /**
@@ -81,5 +133,9 @@ class ContactFormController extends Controller
     public function destroy($id)
     {
         //
+        $contact = ContactForm::find($id);
+        $contact->delete();
+
+        return redirect('contact/index');
     }
 }
